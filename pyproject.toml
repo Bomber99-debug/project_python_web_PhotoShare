@@ -2,7 +2,7 @@
 name = "photoshare"
 version = "0.1.0"
 description = "PhotoShare REST API built with FastAPI"
-authors = [{name = "Andrey Rybchenko"}]
+authors = [{ name = "Andrey Rybchenko" }]
 requires-python = ">=3.13,<3.14"
 dependencies = [
     "fastapi>=0.141,<0.142",
@@ -38,3 +38,7 @@ build-backend = "poetry.core.masonry.api"
 asyncio_mode = "auto"
 testpaths = ["tests"]
 addopts = "-ra"
+
+[tool.poetry]
+package-mode = false
+
