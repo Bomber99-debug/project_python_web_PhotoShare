@@ -13,7 +13,7 @@ def can_modify_photo( photo_user_id: int, user: User ) -> bool:
 
 
 def can_edit_comment( comment_user_id: int, user: User ) -> bool:
-	return user.id == comment_user_id
+	return user.id == comment_user_id or user.role in { Role.MODERATOR, Role.ADMIN }
 
 
 def can_delete_comment( user: User ) -> bool:

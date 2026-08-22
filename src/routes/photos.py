@@ -59,7 +59,7 @@ def build_detail( photo: Photo ) -> PhotoDetailResponse:
 		              401: { "description": "Authentication required or user account is inactive.", },
 		              }, )
 async def upload_user_photo( file: UploadFile = File( ... ),
-                             description: str | None = Form( default=None ),
+                             description: str | None = Form( default=None, min_length=1, max_length=2000, ),
                              tags: list[ str ] | None = Form( default=None ),
                              db: AsyncSession = Depends( get_db ),
                              user: User = Depends( get_current_active_user ), ) -> Photo:
