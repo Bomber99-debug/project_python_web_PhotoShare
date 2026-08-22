@@ -729,12 +729,12 @@ POST /api/auth/logout
 
 ### Коментарі
 
-| Метод    | Endpoint                          | Доступ          | Опис                  |
-|----------|-----------------------------------|-----------------|-----------------------|
-| `POST`   | `/api/photos/{photo_id}/comments` | авторизований   | створення коментаря   |
-| `GET`    | `/api/photos/{photo_id}/comments` | публічний       | список коментарів     |
-| `PUT`    | `/api/comments/{comment_id}`      | автор           | редагування коментаря |
-| `DELETE` | `/api/comments/{comment_id}`      | moderator/admin | видалення коментаря   |
+| Метод    | Endpoint                          | Доступ                 | Опис                  |
+|----------|-----------------------------------|------------------------|-----------------------|
+| `POST`   | `/api/photos/{photo_id}/comments` | авторизований          | створення коментаря   |
+| `GET`    | `/api/photos/{photo_id}/comments` | публічний              | список коментарів     |
+| `PUT`    | `/api/comments/{comment_id}`      | author/moderator/admin | редагування коментаря |
+| `DELETE` | `/api/comments/{comment_id}`      | moderator/admin        | видалення коментаря   |
 
 ### Рейтинги
 

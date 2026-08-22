@@ -50,7 +50,7 @@ async def get_comments( photo_id: int, db: AsyncSession = Depends( get_db ) ):
 @router.put( "/comments/{comment_id}",
              response_model=CommentResponse,
              summary="Edit a comment",
-             description=("Update a comment. The author may edit their own comment."
+             description=("Update a comment. The author may edit their own comment. "
                           "Moderators and administrators may edit any comment."),
              responses={
 		             401: { "description": "Authentication required or user account is inactive.", },

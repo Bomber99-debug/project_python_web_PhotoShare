@@ -19,3 +19,6 @@ htmlcov/
 
 # PostgreSQL local bind data
 postgres-data/
+
+# Sphinx
+docs/_build/
