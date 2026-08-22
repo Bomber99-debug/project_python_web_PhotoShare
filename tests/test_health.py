@@ -1,15 +1,14 @@
-from fastapi.testclient import TestClient
+async def test_root( client ):
+	response = await client.get( "/" )
 
-from main import app
-
-
-def test_root():
-    response = TestClient(app).get("/")
-    assert response.status_code == 200
-    assert response.json()["status"] == "ok"
+	assert response.status_code == 200
+	assert response.json() == { "status": "ok", "application": "PhotoShare API",
+			}
 
 
-def test_health():
-    response = TestClient(app).get("/health")
-    assert response.status_code == 200
-    assert response.json() == {"status": "healthy"}
+async def test_health( client ):
+	response = await client.get( "/health" )
+
+	assert response.status_code == 200
+	assert response.json() == { "status": "healthy",
+			}

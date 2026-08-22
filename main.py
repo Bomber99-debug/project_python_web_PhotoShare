@@ -11,21 +11,28 @@ from src.routes import auth, comments, photos, ratings, search, transforms, user
 
 @asynccontextmanager
 async def lifespan( _: FastAPI ):
-	if not settings.is_development and settings.secret_key == "change-me":
-		raise RuntimeError( "SECRET_KEY must be configured in production" )
+	insecure_secret_keys = { "", "change-me", "replace-with-a-long-random-secret",
+			}
+
+	if not settings.is_development:
+		if settings.secret_key in insecure_secret_keys or len( settings.secret_key ) < 32:
+			raise RuntimeError( "A secure SECRET_KEY of at least 32 characters "
+			                    "must be configured in production", )
+
 	yield
 
 
 app = FastAPI( title="PhotoShare API",
-		version="1.0.0",
-		description="REST API for users, photos, tags, comments, ratings, Cloudinary transformations and QR codes.",
-		lifespan=lifespan, )
+               version="1.0.0",
+               description="REST API for users, photos, tags, comments, ratings, Cloudinary transformations and QR "
+                           "codes.",
+               lifespan=lifespan, )
 
 app.add_middleware( CORSMiddleware,
-		allow_origins=[ "*" ] if settings.is_development else [ ],
-		allow_credentials=False,
-		allow_methods=[ "*" ],
-		allow_headers=[ "*" ], )
+                    allow_origins=[ "*" ] if settings.is_development else [ ],
+                    allow_credentials=False,
+                    allow_methods=[ "*" ],
+                    allow_headers=[ "*" ], )
 
 app.include_router( auth.router, prefix="/api/auth", tags=[ "auth" ] )
 app.include_router( users.router, prefix="/api/users", tags=[ "users" ] )
