@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html lang="uk" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>src.routes.photos &#8212; PhotoShare API 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../_static/documentation_options.js?v=a959cdea"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Індекс" href="../../../genindex.html" />
+    <link rel="search" title="Пошук" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for src.routes.photos</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Photo CRUD endpoints."""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRouter</span><span class="p">,</span> <span class="n">Depends</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">Form</span><span class="p">,</span> <span class="n">HTTPException</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">UploadFile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.asyncio</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncSession</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.database.db</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_db</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.entity.photo</span><span class="w"> </span><span class="kn">import</span> <span class="n">Photo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.entity.user</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.repository.photos</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">create_photo</span><span class="p">,</span>
+                                   <span class="n">delete_photo</span><span class="p">,</span>
+                                   <span class="n">get_or_create_tags</span><span class="p">,</span>
+                                   <span class="n">get_photo_by_id</span><span class="p">,</span>
+                                   <span class="n">get_photo_detail</span><span class="p">,</span>
+                                   <span class="n">set_photo_tags</span><span class="p">,</span>
+                                   <span class="n">update_photo</span><span class="p">,</span>
+                                   <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.schemas.photo</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhotoDetailResponse</span><span class="p">,</span> <span class="n">PhotoResponse</span><span class="p">,</span> <span class="n">PhotoUpdate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.schemas.rating</span><span class="w"> </span><span class="kn">import</span> <span class="n">RatingAverageResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.services.cloudinary</span><span class="w"> </span><span class="kn">import</span> <span class="n">delete_photo</span> <span class="k">as</span> <span class="n">delete_cloudinary_photo</span><span class="p">,</span> <span class="n">upload_photo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.services.dependencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_current_active_user</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.services.permissions</span><span class="w"> </span><span class="kn">import</span> <span class="n">can_modify_photo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.services.tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_tag_names</span>
+
+<span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">()</span>
+<span class="n">ALLOWED_IMAGE_CONTENT_TYPES</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">"image/jpeg"</span><span class="p">,</span> <span class="s2">"image/jpg"</span><span class="p">,</span> <span class="s2">"image/png"</span><span class="p">,</span> <span class="s2">"image/gif"</span><span class="p">,</span> <span class="s2">"image/webp"</span> <span class="p">}</span>
+
+
+<div class="viewcode-block" id="validate_image_file">
+<a class="viewcode-back" href="../../../api/src.routes.photos.html#src.routes.photos.validate_image_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_image_file</span><span class="p">(</span> <span class="n">file</span><span class="p">:</span> <span class="n">UploadFile</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+	<span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">content_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ALLOWED_IMAGE_CONTENT_TYPES</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">"Only jpeg, png, gif and webp images are allowed"</span> <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_detail">
+<a class="viewcode-back" href="../../../api/src.routes.photos.html#src.routes.photos.build_detail">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_detail</span><span class="p">(</span> <span class="n">photo</span><span class="p">:</span> <span class="n">Photo</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PhotoDetailResponse</span><span class="p">:</span>
+	<span class="n">summary</span> <span class="o">=</span> <span class="kc">None</span>
+
+	<span class="k">if</span> <span class="n">photo</span><span class="o">.</span><span class="n">ratings</span><span class="p">:</span>
+		<span class="n">summary</span> <span class="o">=</span> <span class="n">RatingAverageResponse</span><span class="p">(</span> <span class="n">photo_id</span><span class="o">=</span><span class="n">photo</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+		                                 <span class="n">average_rating</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span>
+		                                                      <span class="n">photo</span><span class="o">.</span><span class="n">ratings</span><span class="p">),</span> <span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span> <span class="n">photo</span><span class="o">.</span><span class="n">ratings</span> <span class="p">),</span>
+		                                 <span class="n">ratings_count</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span> <span class="n">photo</span><span class="o">.</span><span class="n">ratings</span> <span class="p">),</span> <span class="p">)</span>
+
+	<span class="n">base</span> <span class="o">=</span> <span class="n">PhotoResponse</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span> <span class="n">photo</span> <span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">PhotoDetailResponse</span><span class="p">(</span> <span class="o">**</span><span class="n">base</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span>
+	                            <span class="n">comments</span><span class="o">=</span><span class="n">photo</span><span class="o">.</span><span class="n">comments</span><span class="p">,</span>
+	                            <span class="n">rating_summary</span><span class="o">=</span><span class="n">summary</span><span class="p">,</span>
+	                            <span class="n">transformed_photos</span><span class="o">=</span><span class="n">photo</span><span class="o">.</span><span class="n">transformed_photos</span><span class="p">,</span> <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="upload_user_photo">
+<a class="viewcode-back" href="../../../api/src.routes.photos.html#src.routes.photos.upload_user_photo">[docs]</a>
+<span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span> <span class="s2">""</span><span class="p">,</span>
+              <span class="n">response_model</span><span class="o">=</span><span class="n">PhotoResponse</span><span class="p">,</span>
+              <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_201_CREATED</span><span class="p">,</span>
+              <span class="n">summary</span><span class="o">=</span><span class="s2">"Upload a photo"</span><span class="p">,</span>
+              <span class="n">description</span><span class="o">=</span><span class="p">(</span><span class="s2">"Upload an image to Cloudinary and save its metadata in PhotoShare. "</span>
+                           <span class="s2">"Supported formats: JPEG, PNG, GIF and WebP. "</span>
+                           <span class="s2">"A photo can contain at most five unique normalized tags."</span><span class="p">),</span>
+              <span class="n">responses</span><span class="o">=</span><span class="p">{</span>
+		              <span class="mi">400</span><span class="p">:</span> <span class="p">{</span> <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Unsupported image type or invalid tags."</span><span class="p">,</span> <span class="p">},</span>
+		              <span class="mi">401</span><span class="p">:</span> <span class="p">{</span> <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Authentication required or user account is inactive."</span><span class="p">,</span> <span class="p">},</span>
+		              <span class="p">},</span> <span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">upload_user_photo</span><span class="p">(</span> <span class="n">file</span><span class="p">:</span> <span class="n">UploadFile</span> <span class="o">=</span> <span class="n">File</span><span class="p">(</span> <span class="o">...</span> <span class="p">),</span>
+                             <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Form</span><span class="p">(</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="p">),</span>
+                             <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span> <span class="nb">str</span> <span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Form</span><span class="p">(</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span> <span class="p">),</span>
+                             <span class="n">db</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span> <span class="n">get_db</span> <span class="p">),</span>
+                             <span class="n">user</span><span class="p">:</span> <span class="n">User</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span> <span class="n">get_current_active_user</span> <span class="p">),</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Photo</span><span class="p">:</span>
+	<span class="n">validate_image_file</span><span class="p">(</span> <span class="n">file</span> <span class="p">)</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">normalized_tags</span> <span class="o">=</span> <span class="n">normalize_tag_names</span><span class="p">(</span> <span class="n">tags</span> <span class="p">)</span>
+	<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span> <span class="n">exc</span> <span class="p">)</span> <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+	<span class="n">uploaded</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">uploaded</span> <span class="o">=</span> <span class="k">await</span> <span class="n">upload_photo</span><span class="p">(</span> <span class="n">file</span> <span class="p">)</span>
+		<span class="n">photo</span> <span class="o">=</span> <span class="k">await</span> <span class="n">create_photo</span><span class="p">(</span> <span class="n">db</span><span class="p">,</span>
+		                            <span class="n">user_id</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+		                            <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
+		                            <span class="n">image_url</span><span class="o">=</span><span class="n">uploaded</span><span class="p">[</span> <span class="s2">"image_url"</span> <span class="p">],</span>
+		                            <span class="n">public_id</span><span class="o">=</span><span class="n">uploaded</span><span class="p">[</span> <span class="s2">"public_id"</span> <span class="p">],</span> <span class="p">)</span>
+		<span class="k">if</span> <span class="n">normalized_tags</span><span class="p">:</span>
+			<span class="n">photo</span> <span class="o">=</span> <span class="k">await</span> <span class="n">set_photo_tags</span><span class="p">(</span> <span class="n">db</span><span class="p">,</span> <span class="n">photo</span><span class="p">,</span> <span class="k">await</span> <span class="n">get_or_create_tags</span><span class="p">(</span> <span class="n">db</span><span class="p">,</span> <span class="n">normalized_tags</span> <span class="p">)</span> <span class="p">)</span>
+		<span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span> <span class="n">photo</span><span class="p">,</span> <span class="n">attribute_names</span><span class="o">=</span><span class="p">[</span> <span class="s2">"tags"</span> <span class="p">]</span> <span class="p">)</span>
+		<span class="k">return</span> <span class="n">photo</span>
+	<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+		<span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">uploaded</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="k">await</span> <span class="n">delete_cloudinary_photo</span><span class="p">(</span> <span class="n">uploaded</span><span class="p">[</span> <span class="s2">"public_id"</span> <span class="p">]</span> <span class="p">)</span>
+			<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+				<span class="k">pass</span>
+		<span class="k">raise</span></div>
+
+
+
+<div class="viewcode-block" id="get_photo">
+<a class="viewcode-back" href="../../../api/src.routes.photos.html#src.routes.photos.get_photo">[docs]</a>
+<span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s2">"/</span><span class="si">{photo_id}</span><span class="s2">"</span><span class="p">,</span>
+             <span class="n">response_model</span><span class="o">=</span><span class="n">PhotoDetailResponse</span><span class="p">,</span>
+             <span class="n">summary</span><span class="o">=</span><span class="s2">"Get photo details"</span><span class="p">,</span>
+             <span class="n">description</span><span class="o">=</span><span class="p">(</span><span class="s2">"Return a photo with its tags, comments, rating summary "</span>
+                          <span class="s2">"and saved transformed versions."</span><span class="p">),</span>
+             <span class="n">responses</span><span class="o">=</span><span class="p">{</span> <span class="mi">404</span><span class="p">:</span> <span class="p">{</span> <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Photo not found."</span><span class="p">,</span> <span class="p">},</span>
+                         <span class="p">},</span> <span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_photo</span><span class="p">(</span> <span class="n">photo_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span> <span class="n">get_db</span> <span class="p">)</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PhotoDetailResponse</span><span class="p">:</span>
+	<span class="n">photo</span> <span class="o">=</span> <span class="k">await</span> <span class="n">get_photo_detail</span><span class="p">(</span> <span class="n">db</span><span class="p">,</span> <span class="n">photo_id</span> <span class="p">)</span>
+	<span class="k">if</span> <span class="n">photo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">"Photo not found"</span> <span class="p">)</span>
+	<span class="k">return</span> <span class="n">build_detail</span><span class="p">(</span> <span class="n">photo</span> <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="update_user_photo">
+<a class="viewcode-back" href="../../../api/src.routes.photos.html#src.routes.photos.update_user_photo">[docs]</a>
+<span class="nd">@router</span><span class="o">.</span><span class="n">put</span><span class="p">(</span> <span class="s2">"/</span><span class="si">{photo_id}</span><span class="s2">"</span><span class="p">,</span>
+             <span class="n">response_model</span><span class="o">=</span><span class="n">PhotoResponse</span><span class="p">,</span>
+             <span class="n">summary</span><span class="o">=</span><span class="s2">"Update a photo"</span><span class="p">,</span>
+             <span class="n">description</span><span class="o">=</span><span class="p">(</span><span class="s2">"Update the photo description and/or tags. "</span>
+                          <span class="s2">"The photo owner may edit their own photo; an admin may edit any photo."</span><span class="p">),</span>
+             <span class="n">responses</span><span class="o">=</span><span class="p">{</span>
+		             <span class="mi">400</span><span class="p">:</span> <span class="p">{</span> <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Invalid tags."</span><span class="p">,</span> <span class="p">},</span>
+		             <span class="mi">401</span><span class="p">:</span> <span class="p">{</span> <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Authentication required or user account is inactive."</span><span class="p">,</span> <span class="p">},</span>
+		             <span class="mi">403</span><span class="p">:</span> <span class="p">{</span> <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"The current user is not allowed to modify this photo."</span><span class="p">,</span> <span class="p">},</span>
+		             <span class="mi">404</span><span class="p">:</span> <span class="p">{</span> <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Photo not found."</span><span class="p">,</span> <span class="p">},</span>
+		             <span class="p">},</span> <span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">update_user_photo</span><span class="p">(</span> <span class="n">photo_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                             <span class="n">data</span><span class="p">:</span> <span class="n">PhotoUpdate</span><span class="p">,</span>
+                             <span class="n">db</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span> <span class="n">get_db</span> <span class="p">),</span>
+                             <span class="n">user</span><span class="p">:</span> <span class="n">User</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span> <span class="n">get_current_active_user</span> <span class="p">),</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Photo</span><span class="p">:</span>
+	<span class="n">photo</span> <span class="o">=</span> <span class="k">await</span> <span class="n">get_photo_by_id</span><span class="p">(</span> <span class="n">db</span><span class="p">,</span> <span class="n">photo_id</span> <span class="p">)</span>
+	<span class="k">if</span> <span class="n">photo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">"Photo not found"</span> <span class="p">)</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">can_modify_photo</span><span class="p">(</span> <span class="n">photo</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="n">user</span> <span class="p">):</span>
+		<span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">403</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">"Insufficient permissions"</span> <span class="p">)</span>
+	<span class="n">changes</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span> <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span> <span class="p">)</span>
+	<span class="n">tags</span> <span class="o">=</span> <span class="n">changes</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span> <span class="s2">"tags"</span><span class="p">,</span> <span class="kc">None</span> <span class="p">)</span>
+	<span class="k">if</span> <span class="n">changes</span><span class="p">:</span>
+		<span class="n">photo</span> <span class="o">=</span> <span class="k">await</span> <span class="n">update_photo</span><span class="p">(</span> <span class="n">db</span><span class="p">,</span> <span class="n">photo</span><span class="p">,</span> <span class="n">changes</span> <span class="p">)</span>
+	<span class="k">if</span> <span class="n">tags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">normalized</span> <span class="o">=</span> <span class="n">normalize_tag_names</span><span class="p">(</span> <span class="n">tags</span> <span class="p">)</span>
+		<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span> <span class="n">exc</span> <span class="p">)</span> <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+		<span class="n">photo</span> <span class="o">=</span> <span class="k">await</span> <span class="n">set_photo_tags</span><span class="p">(</span> <span class="n">db</span><span class="p">,</span> <span class="n">photo</span><span class="p">,</span> <span class="k">await</span> <span class="n">get_or_create_tags</span><span class="p">(</span> <span class="n">db</span><span class="p">,</span> <span class="n">normalized</span> <span class="p">)</span> <span class="p">)</span>
+	<span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span> <span class="n">photo</span><span class="p">,</span> <span class="n">attribute_names</span><span class="o">=</span><span class="p">[</span> <span class="s2">"tags"</span> <span class="p">]</span> <span class="p">)</span>
+	<span class="k">return</span> <span class="n">photo</span></div>
+
+
+
+<div class="viewcode-block" id="delete_user_photo">
+<a class="viewcode-back" href="../../../api/src.routes.photos.html#src.routes.photos.delete_user_photo">[docs]</a>
+<span class="nd">@router</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span> <span class="s2">"/</span><span class="si">{photo_id}</span><span class="s2">"</span><span class="p">,</span>
+                <span class="n">summary</span><span class="o">=</span><span class="s2">"Delete a photo"</span><span class="p">,</span>
+                <span class="n">description</span><span class="o">=</span><span class="p">(</span><span class="s2">"Delete a photo from Cloudinary and PhotoShare. "</span>
+                             <span class="s2">"The owner may delete their own photo; an admin may delete any photo."</span><span class="p">),</span>
+                <span class="n">responses</span><span class="o">=</span><span class="p">{</span>
+		                <span class="mi">401</span><span class="p">:</span> <span class="p">{</span> <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Authentication required or user account is inactive."</span><span class="p">,</span> <span class="p">},</span>
+		                <span class="mi">403</span><span class="p">:</span> <span class="p">{</span> <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"The current user is not allowed to delete this photo."</span><span class="p">,</span> <span class="p">},</span>
+		                <span class="mi">404</span><span class="p">:</span> <span class="p">{</span> <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Photo not found."</span><span class="p">,</span> <span class="p">},</span>
+		                <span class="p">},</span> <span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">delete_user_photo</span><span class="p">(</span> <span class="n">photo_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                             <span class="n">db</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span> <span class="n">get_db</span> <span class="p">),</span>
+                             <span class="n">user</span><span class="p">:</span> <span class="n">User</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span> <span class="n">get_current_active_user</span> <span class="p">),</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="p">]:</span>
+	<span class="n">photo</span> <span class="o">=</span> <span class="k">await</span> <span class="n">get_photo_by_id</span><span class="p">(</span> <span class="n">db</span><span class="p">,</span> <span class="n">photo_id</span> <span class="p">)</span>
+	<span class="k">if</span> <span class="n">photo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">"Photo not found"</span> <span class="p">)</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">can_modify_photo</span><span class="p">(</span> <span class="n">photo</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="n">user</span> <span class="p">):</span>
+		<span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">403</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">"Insufficient permissions"</span> <span class="p">)</span>
+	<span class="k">await</span> <span class="n">delete_cloudinary_photo</span><span class="p">(</span> <span class="n">photo</span><span class="o">.</span><span class="n">public_id</span> <span class="p">)</span>
+	<span class="k">await</span> <span class="n">delete_photo</span><span class="p">(</span> <span class="n">db</span><span class="p">,</span> <span class="n">photo</span> <span class="p">)</span>
+	<span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Photo deleted successfully"</span> <span class="p">}</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">PhotoShare API</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Вперед" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Навігація</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">src</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Andrey Rybchenko.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -969,6 +969,7 @@ curl http://localhost:8000/health
 
 ```bash
 sphinx-apidoc \
+  --implicit-namespaces \
   --force \
   --separate \
   -o docs/api \

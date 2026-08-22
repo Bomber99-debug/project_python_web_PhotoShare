@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+<html lang="uk" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>src.schemas namespace &#8212; PhotoShare API 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=a959cdea"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Індекс" href="../genindex.html" />
+    <link rel="search" title="Пошук" href="../search.html" />
+    <link rel="next" title="src.schemas.auth module" href="src.schemas.auth.html" />
+    <link rel="prev" title="src.routes.users module" href="src.routes.users.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-src.schemas">
+<span id="src-schemas-namespace"></span><h1>src.schemas namespace<a class="headerlink" href="#module-src.schemas" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="src.schemas.auth.html">src.schemas.auth module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.auth.html#src.schemas.auth.UserRegister"><code class="docutils literal notranslate"><span class="pre">UserRegister</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.auth.html#src.schemas.auth.UserRegister.model_config"><code class="docutils literal notranslate"><span class="pre">UserRegister.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.auth.html#src.schemas.auth.UserRegister.username"><code class="docutils literal notranslate"><span class="pre">UserRegister.username</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.auth.html#src.schemas.auth.UserRegister.email"><code class="docutils literal notranslate"><span class="pre">UserRegister.email</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.auth.html#src.schemas.auth.UserRegister.password"><code class="docutils literal notranslate"><span class="pre">UserRegister.password</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.auth.html#src.schemas.auth.Token"><code class="docutils literal notranslate"><span class="pre">Token</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.auth.html#src.schemas.auth.Token.access_token"><code class="docutils literal notranslate"><span class="pre">Token.access_token</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.auth.html#src.schemas.auth.Token.token_type"><code class="docutils literal notranslate"><span class="pre">Token.token_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.auth.html#src.schemas.auth.Token.model_config"><code class="docutils literal notranslate"><span class="pre">Token.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.auth.html#src.schemas.auth.TokenPayload"><code class="docutils literal notranslate"><span class="pre">TokenPayload</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.auth.html#src.schemas.auth.TokenPayload.sub"><code class="docutils literal notranslate"><span class="pre">TokenPayload.sub</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.auth.html#src.schemas.auth.TokenPayload.exp"><code class="docutils literal notranslate"><span class="pre">TokenPayload.exp</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.auth.html#src.schemas.auth.TokenPayload.role"><code class="docutils literal notranslate"><span class="pre">TokenPayload.role</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.auth.html#src.schemas.auth.TokenPayload.model_config"><code class="docutils literal notranslate"><span class="pre">TokenPayload.model_config</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src.schemas.comment.html">src.schemas.comment module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.comment.html#src.schemas.comment.CommentCreate"><code class="docutils literal notranslate"><span class="pre">CommentCreate</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.comment.html#src.schemas.comment.CommentCreate.text"><code class="docutils literal notranslate"><span class="pre">CommentCreate.text</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.comment.html#src.schemas.comment.CommentCreate.validate_text"><code class="docutils literal notranslate"><span class="pre">CommentCreate.validate_text()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.comment.html#src.schemas.comment.CommentCreate.model_config"><code class="docutils literal notranslate"><span class="pre">CommentCreate.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.comment.html#src.schemas.comment.CommentUpdate"><code class="docutils literal notranslate"><span class="pre">CommentUpdate</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.comment.html#src.schemas.comment.CommentUpdate.model_config"><code class="docutils literal notranslate"><span class="pre">CommentUpdate.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.comment.html#src.schemas.comment.CommentResponse"><code class="docutils literal notranslate"><span class="pre">CommentResponse</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.comment.html#src.schemas.comment.CommentResponse.model_config"><code class="docutils literal notranslate"><span class="pre">CommentResponse.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.comment.html#src.schemas.comment.CommentResponse.id"><code class="docutils literal notranslate"><span class="pre">CommentResponse.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.comment.html#src.schemas.comment.CommentResponse.photo_id"><code class="docutils literal notranslate"><span class="pre">CommentResponse.photo_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.comment.html#src.schemas.comment.CommentResponse.user_id"><code class="docutils literal notranslate"><span class="pre">CommentResponse.user_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.comment.html#src.schemas.comment.CommentResponse.text"><code class="docutils literal notranslate"><span class="pre">CommentResponse.text</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.comment.html#src.schemas.comment.CommentResponse.created_at"><code class="docutils literal notranslate"><span class="pre">CommentResponse.created_at</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.comment.html#src.schemas.comment.CommentResponse.updated_at"><code class="docutils literal notranslate"><span class="pre">CommentResponse.updated_at</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src.schemas.photo.html">src.schemas.photo module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoUpdate"><code class="docutils literal notranslate"><span class="pre">PhotoUpdate</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoUpdate.description"><code class="docutils literal notranslate"><span class="pre">PhotoUpdate.description</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoUpdate.tags"><code class="docutils literal notranslate"><span class="pre">PhotoUpdate.tags</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoUpdate.validate_tags"><code class="docutils literal notranslate"><span class="pre">PhotoUpdate.validate_tags()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoUpdate.model_config"><code class="docutils literal notranslate"><span class="pre">PhotoUpdate.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoResponse"><code class="docutils literal notranslate"><span class="pre">PhotoResponse</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoResponse.model_config"><code class="docutils literal notranslate"><span class="pre">PhotoResponse.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoResponse.id"><code class="docutils literal notranslate"><span class="pre">PhotoResponse.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoResponse.user_id"><code class="docutils literal notranslate"><span class="pre">PhotoResponse.user_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoResponse.description"><code class="docutils literal notranslate"><span class="pre">PhotoResponse.description</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoResponse.image_url"><code class="docutils literal notranslate"><span class="pre">PhotoResponse.image_url</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoResponse.public_id"><code class="docutils literal notranslate"><span class="pre">PhotoResponse.public_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoResponse.created_at"><code class="docutils literal notranslate"><span class="pre">PhotoResponse.created_at</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoResponse.updated_at"><code class="docutils literal notranslate"><span class="pre">PhotoResponse.updated_at</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoResponse.tags"><code class="docutils literal notranslate"><span class="pre">PhotoResponse.tags</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoDetailResponse"><code class="docutils literal notranslate"><span class="pre">PhotoDetailResponse</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoDetailResponse.comments"><code class="docutils literal notranslate"><span class="pre">PhotoDetailResponse.comments</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoDetailResponse.rating_summary"><code class="docutils literal notranslate"><span class="pre">PhotoDetailResponse.rating_summary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoDetailResponse.transformed_photos"><code class="docutils literal notranslate"><span class="pre">PhotoDetailResponse.transformed_photos</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo.html#src.schemas.photo.PhotoDetailResponse.model_config"><code class="docutils literal notranslate"><span class="pre">PhotoDetailResponse.model_config</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src.schemas.photo_transform.html">src.schemas.photo_transform module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.CropMode"><code class="docutils literal notranslate"><span class="pre">CropMode</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.CropMode.SCALE"><code class="docutils literal notranslate"><span class="pre">CropMode.SCALE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.CropMode.FIT"><code class="docutils literal notranslate"><span class="pre">CropMode.FIT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.CropMode.FILL"><code class="docutils literal notranslate"><span class="pre">CropMode.FILL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.CropMode.CROP"><code class="docutils literal notranslate"><span class="pre">CropMode.CROP</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.CropMode.THUMB"><code class="docutils literal notranslate"><span class="pre">CropMode.THUMB</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.CropMode.PAD"><code class="docutils literal notranslate"><span class="pre">CropMode.PAD</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.CropMode.LIMIT"><code class="docutils literal notranslate"><span class="pre">CropMode.LIMIT</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.ImageFormat"><code class="docutils literal notranslate"><span class="pre">ImageFormat</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.ImageFormat.JPG"><code class="docutils literal notranslate"><span class="pre">ImageFormat.JPG</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.ImageFormat.PNG"><code class="docutils literal notranslate"><span class="pre">ImageFormat.PNG</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.ImageFormat.WEBP"><code class="docutils literal notranslate"><span class="pre">ImageFormat.WEBP</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.ImageFormat.GIF"><code class="docutils literal notranslate"><span class="pre">ImageFormat.GIF</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.ImageFormat.AUTO"><code class="docutils literal notranslate"><span class="pre">ImageFormat.AUTO</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.TransformRequest"><code class="docutils literal notranslate"><span class="pre">TransformRequest</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.TransformRequest.width"><code class="docutils literal notranslate"><span class="pre">TransformRequest.width</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.TransformRequest.height"><code class="docutils literal notranslate"><span class="pre">TransformRequest.height</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.TransformRequest.crop"><code class="docutils literal notranslate"><span class="pre">TransformRequest.crop</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.TransformRequest.angle"><code class="docutils literal notranslate"><span class="pre">TransformRequest.angle</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.TransformRequest.effect"><code class="docutils literal notranslate"><span class="pre">TransformRequest.effect</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.TransformRequest.format"><code class="docutils literal notranslate"><span class="pre">TransformRequest.format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.TransformRequest.validate_effect"><code class="docutils literal notranslate"><span class="pre">TransformRequest.validate_effect()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.TransformRequest.model_config"><code class="docutils literal notranslate"><span class="pre">TransformRequest.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.PhotoTransformResponse"><code class="docutils literal notranslate"><span class="pre">PhotoTransformResponse</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.PhotoTransformResponse.model_config"><code class="docutils literal notranslate"><span class="pre">PhotoTransformResponse.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.PhotoTransformResponse.id"><code class="docutils literal notranslate"><span class="pre">PhotoTransformResponse.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.PhotoTransformResponse.photo_id"><code class="docutils literal notranslate"><span class="pre">PhotoTransformResponse.photo_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.PhotoTransformResponse.transformation_type"><code class="docutils literal notranslate"><span class="pre">PhotoTransformResponse.transformation_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.PhotoTransformResponse.transformed_url"><code class="docutils literal notranslate"><span class="pre">PhotoTransformResponse.transformed_url</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.PhotoTransformResponse.qr_code_url"><code class="docutils literal notranslate"><span class="pre">PhotoTransformResponse.qr_code_url</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.photo_transform.html#src.schemas.photo_transform.PhotoTransformResponse.created_at"><code class="docutils literal notranslate"><span class="pre">PhotoTransformResponse.created_at</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src.schemas.rating.html">src.schemas.rating module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.rating.html#src.schemas.rating.RatingCreate"><code class="docutils literal notranslate"><span class="pre">RatingCreate</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.rating.html#src.schemas.rating.RatingCreate.value"><code class="docutils literal notranslate"><span class="pre">RatingCreate.value</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.rating.html#src.schemas.rating.RatingCreate.model_config"><code class="docutils literal notranslate"><span class="pre">RatingCreate.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.rating.html#src.schemas.rating.RatingResponse"><code class="docutils literal notranslate"><span class="pre">RatingResponse</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.rating.html#src.schemas.rating.RatingResponse.model_config"><code class="docutils literal notranslate"><span class="pre">RatingResponse.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.rating.html#src.schemas.rating.RatingResponse.id"><code class="docutils literal notranslate"><span class="pre">RatingResponse.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.rating.html#src.schemas.rating.RatingResponse.photo_id"><code class="docutils literal notranslate"><span class="pre">RatingResponse.photo_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.rating.html#src.schemas.rating.RatingResponse.user_id"><code class="docutils literal notranslate"><span class="pre">RatingResponse.user_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.rating.html#src.schemas.rating.RatingResponse.value"><code class="docutils literal notranslate"><span class="pre">RatingResponse.value</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.rating.html#src.schemas.rating.RatingResponse.created_at"><code class="docutils literal notranslate"><span class="pre">RatingResponse.created_at</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.rating.html#src.schemas.rating.RatingAverageResponse"><code class="docutils literal notranslate"><span class="pre">RatingAverageResponse</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.rating.html#src.schemas.rating.RatingAverageResponse.photo_id"><code class="docutils literal notranslate"><span class="pre">RatingAverageResponse.photo_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.rating.html#src.schemas.rating.RatingAverageResponse.average_rating"><code class="docutils literal notranslate"><span class="pre">RatingAverageResponse.average_rating</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.rating.html#src.schemas.rating.RatingAverageResponse.ratings_count"><code class="docutils literal notranslate"><span class="pre">RatingAverageResponse.ratings_count</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.rating.html#src.schemas.rating.RatingAverageResponse.model_config"><code class="docutils literal notranslate"><span class="pre">RatingAverageResponse.model_config</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src.schemas.tag.html">src.schemas.tag module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.tag.html#src.schemas.tag.TagResponse"><code class="docutils literal notranslate"><span class="pre">TagResponse</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.tag.html#src.schemas.tag.TagResponse.model_config"><code class="docutils literal notranslate"><span class="pre">TagResponse.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.tag.html#src.schemas.tag.TagResponse.id"><code class="docutils literal notranslate"><span class="pre">TagResponse.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.tag.html#src.schemas.tag.TagResponse.name"><code class="docutils literal notranslate"><span class="pre">TagResponse.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src.schemas.user.html">src.schemas.user module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserBase"><code class="docutils literal notranslate"><span class="pre">UserBase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserBase.model_config"><code class="docutils literal notranslate"><span class="pre">UserBase.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserBase.username"><code class="docutils literal notranslate"><span class="pre">UserBase.username</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserBase.email"><code class="docutils literal notranslate"><span class="pre">UserBase.email</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserBase.avatar_url"><code class="docutils literal notranslate"><span class="pre">UserBase.avatar_url</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserUpdate"><code class="docutils literal notranslate"><span class="pre">UserUpdate</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserUpdate.model_config"><code class="docutils literal notranslate"><span class="pre">UserUpdate.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserUpdate.username"><code class="docutils literal notranslate"><span class="pre">UserUpdate.username</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserUpdate.email"><code class="docutils literal notranslate"><span class="pre">UserUpdate.email</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserUpdate.password"><code class="docutils literal notranslate"><span class="pre">UserUpdate.password</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserUpdate.avatar_url"><code class="docutils literal notranslate"><span class="pre">UserUpdate.avatar_url</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserResponse"><code class="docutils literal notranslate"><span class="pre">UserResponse</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserResponse.id"><code class="docutils literal notranslate"><span class="pre">UserResponse.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserResponse.role"><code class="docutils literal notranslate"><span class="pre">UserResponse.role</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserResponse.is_active"><code class="docutils literal notranslate"><span class="pre">UserResponse.is_active</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserResponse.created_at"><code class="docutils literal notranslate"><span class="pre">UserResponse.created_at</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserResponse.updated_at"><code class="docutils literal notranslate"><span class="pre">UserResponse.updated_at</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserResponse.model_config"><code class="docutils literal notranslate"><span class="pre">UserResponse.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserPublicProfile"><code class="docutils literal notranslate"><span class="pre">UserPublicProfile</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserPublicProfile.model_config"><code class="docutils literal notranslate"><span class="pre">UserPublicProfile.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserPublicProfile.id"><code class="docutils literal notranslate"><span class="pre">UserPublicProfile.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserPublicProfile.username"><code class="docutils literal notranslate"><span class="pre">UserPublicProfile.username</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserPublicProfile.avatar_url"><code class="docutils literal notranslate"><span class="pre">UserPublicProfile.avatar_url</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserPublicProfile.role"><code class="docutils literal notranslate"><span class="pre">UserPublicProfile.role</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserPublicProfile.created_at"><code class="docutils literal notranslate"><span class="pre">UserPublicProfile.created_at</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserPublicProfile.uploaded_photos_count"><code class="docutils literal notranslate"><span class="pre">UserPublicProfile.uploaded_photos_count</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserRoleUpdate"><code class="docutils literal notranslate"><span class="pre">UserRoleUpdate</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserRoleUpdate.role"><code class="docutils literal notranslate"><span class="pre">UserRoleUpdate.role</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserRoleUpdate.model_config"><code class="docutils literal notranslate"><span class="pre">UserRoleUpdate.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserBanResponse"><code class="docutils literal notranslate"><span class="pre">UserBanResponse</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserBanResponse.id"><code class="docutils literal notranslate"><span class="pre">UserBanResponse.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserBanResponse.username"><code class="docutils literal notranslate"><span class="pre">UserBanResponse.username</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserBanResponse.is_active"><code class="docutils literal notranslate"><span class="pre">UserBanResponse.is_active</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserBanResponse.message"><code class="docutils literal notranslate"><span class="pre">UserBanResponse.message</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.schemas.user.html#src.schemas.user.UserBanResponse.model_config"><code class="docutils literal notranslate"><span class="pre">UserBanResponse.model_config</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">PhotoShare API</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Вперед" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Навігація</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="src.html">src namespace</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">src</a><ul>
+  <li><a href="src.html">src namespace</a><ul>
+      <li>Previous: <a href="src.routes.users.html" title="Попередній розділ">src.routes.users module</a></li>
+      <li>Next: <a href="src.schemas.auth.html" title="наступний розділ">src.schemas.auth module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Andrey Rybchenko.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/api/src.schemas.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
