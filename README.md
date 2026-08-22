@@ -961,6 +961,35 @@ curl http://localhost:8000/health
 
 ---
 
+## Sphinx documentation
+
+Окрім Swagger/OpenAPI, проєкт містить документацію, згенеровану за допомогою Sphinx.
+
+Оновити API reference:
+
+```bash
+sphinx-apidoc \
+  --force \
+  --separate \
+  -o docs/api \
+  src
+```
+
+Зібрати HTML-документацію:
+
+```bash
+sphinx-build \
+  -b html \
+  docs \
+  docs/_build/html
+```
+
+Після збірки документація доступна локально у:
+
+```text
+docs/_build/html/index.html
+```
+
 ## Production
 
 Для production необхідно:

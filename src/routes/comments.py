@@ -50,10 +50,11 @@ async def get_comments( photo_id: int, db: AsyncSession = Depends( get_db ) ):
 @router.put( "/comments/{comment_id}",
              response_model=CommentResponse,
              summary="Edit a comment",
-             description="Update a comment. A user may edit only their own comments.",
+             description=("Update a comment. The author may edit their own comment."
+                          "Moderators and administrators may edit any comment."),
              responses={
 		             401: { "description": "Authentication required or user account is inactive.", },
-		             403: { "description": "The current user is not the author of this comment.", },
+		             403: { "description": "The current user is not allowed to edit this comment.", },
 		             404: { "description": "Comment not found.", },
 		             }, )
 async def edit_comment( comment_id: int,
@@ -64,7 +65,7 @@ async def edit_comment( comment_id: int,
 	if comment is None:
 		raise HTTPException( status_code=404, detail="Comment not found" )
 	if not can_edit_comment( comment.user_id, user ):
-		raise HTTPException( status_code=403, detail="You can edit only your own comments" )
+		raise HTTPException( status_code=403, detail="You do not have permission to edit this comment" )
 	comment = await update_comment( db, comment, data.text )
 	await db.commit()
 	return comment
