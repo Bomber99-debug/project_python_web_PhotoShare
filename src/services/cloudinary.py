@@ -15,9 +15,9 @@ def _configure() -> None:
 	if not all( [ settings.cloudinary_name, settings.cloudinary_api_key, settings.cloudinary_api_secret ] ):
 		raise HTTPException( status_code=500, detail="Cloudinary is not configured" )
 	cloudinary.config( cloud_name=settings.cloudinary_name,
-			api_key=settings.cloudinary_api_key,
-			api_secret=settings.cloudinary_api_secret,
-			secure=True, )
+	                   api_key=settings.cloudinary_api_key,
+	                   api_secret=settings.cloudinary_api_secret,
+	                   secure=True, )
 
 
 def transformation_options( data: TransformRequest ) -> dict:
@@ -32,8 +32,11 @@ def transformation_options( data: TransformRequest ) -> dict:
 		options[ "angle" ] = data.angle
 	if data.effect is not None:
 		options[ "effect" ] = data.effect
-	if data.format is not None and data.format != ImageFormat.AUTO:
+	if data.format == ImageFormat.AUTO:
+		options[ "fetch_format" ] = "auto"
+	elif data.format is not None:
 		options[ "format" ] = data.format.value
+
 	return options
 
 
