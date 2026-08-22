@@ -12,7 +12,7 @@ from src.routes import auth, comments, photos, ratings, search, transforms, user
 @asynccontextmanager
 async def lifespan( _: FastAPI ):
 	insecure_secret_keys = { "", "change-me", "replace-with-a-long-random-secret",
-			}
+	                         }
 
 	if not settings.is_development:
 		if settings.secret_key in insecure_secret_keys or len( settings.secret_key ) < 32:
@@ -43,11 +43,19 @@ app.include_router( ratings.router, prefix="/api", tags=[ "ratings" ] )
 app.include_router( transforms.router, prefix="/api", tags=[ "transforms" ] )
 
 
-@app.get( "/", tags=[ "health" ] )
+@app.get( "/",
+		tags=[ "health" ],
+		summary="API status",
+		description="Return basic information confirming that the PhotoShare API is running.", )
 async def root() -> dict[ str, str ]:
-	return { "status": "ok", "application": "PhotoShare API" }
+	return { "status": "ok", "application": "PhotoShare API",
+			}
 
 
-@app.get( "/health", tags=[ "health" ] )
+@app.get( "/health",
+		tags=[ "health" ],
+		summary="Health check",
+		description="Return a simple health status for monitoring and deployment checks.", )
 async def health() -> dict[ str, str ]:
-	return { "status": "healthy" }
+	return { "status": "healthy",
+			}
