@@ -32,12 +32,15 @@ def validate_image_file( file: UploadFile ) -> None:
 
 def build_detail( photo: Photo ) -> PhotoDetailResponse:
 	summary = None
+
 	if photo.ratings:
 		summary = RatingAverageResponse( photo_id=photo.id,
-		                                 average_rating=sum(
-				                                 item.value for item in photo.ratings, ) / len( photo.ratings ),
+		                                 average_rating=sum( (item.value for item in
+		                                                      photo.ratings), ) / len( photo.ratings ),
 		                                 ratings_count=len( photo.ratings ), )
+
 	base = PhotoResponse.model_validate( photo )
+
 	return PhotoDetailResponse( **base.model_dump(),
 	                            comments=photo.comments,
 	                            rating_summary=summary,
