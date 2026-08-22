@@ -20,7 +20,17 @@ from src.services.permissions import can_manage_rating, require_moderator_or_adm
 router = APIRouter()
 
 
-@router.post( "/photos/{photo_id}/ratings", response_model=RatingResponse, status_code=status.HTTP_201_CREATED )
+@router.post( "/photos/{photo_id}/ratings",
+              response_model=RatingResponse,
+              status_code=status.HTTP_201_CREATED,
+              summary="Rate a photo",
+              description=("Add a rating from 1 to 5 to a photo. "
+                           "A user cannot rate their own photo and may rate each photo only once."),
+              responses={
+		              400: { "description": "Cannot rate own photo or photo has already been rated by this user.", },
+		              401: { "description": "Authentication required or user account is inactive.", },
+		              404: { "description": "Photo not found.", },
+		              }, )
 async def rate_photo( photo_id: int,
                       data: RatingCreate,
                       db: AsyncSession = Depends( get_db ),
@@ -37,7 +47,12 @@ async def rate_photo( photo_id: int,
 	return rating
 
 
-@router.get( "/photos/{photo_id}/ratings", response_model=RatingAverageResponse )
+@router.get( "/photos/{photo_id}/ratings",
+             response_model=RatingAverageResponse,
+             summary="Get photo rating summary",
+             description="Return the average rating and total number of ratings for a photo.",
+             responses={ 404: { "description": "Photo not found.", },
+                         }, )
 async def rating_summary( photo_id: int, db: AsyncSession = Depends( get_db ) ):
 	if await get_photo_by_id( db, photo_id ) is None:
 		raise HTTPException( status_code=404, detail="Photo not found" )
@@ -45,14 +60,29 @@ async def rating_summary( photo_id: int, db: AsyncSession = Depends( get_db ) ):
 	return RatingAverageResponse( photo_id=photo_id, average_rating=average, ratings_count=count )
 
 
-@router.get( "/photos/{photo_id}/ratings/details", response_model=list[ RatingResponse ] )
+@router.get( "/photos/{photo_id}/ratings/details",
+             response_model=list[ RatingResponse ],
+             summary="Get detailed photo ratings",
+             description=("Return individual ratings for a photo. "
+                          "Only moderators and administrators may access rating details."),
+             responses={
+		             401: { "description": "Authentication required or user account is inactive.", },
+		             403: { "description": "Moderator or administrator role required.", },
+		             }, )
 async def rating_details( photo_id: int,
                           db: AsyncSession = Depends( get_db ),
                           _: User = Depends( require_moderator_or_admin ), ):
 	return await list_photo_ratings( db, photo_id )
 
 
-@router.delete( "/ratings/{rating_id}" )
+@router.delete( "/ratings/{rating_id}",
+                summary="Delete a rating",
+                description="Delete an existing rating. Only moderators and administrators may remove ratings.",
+                responses={
+		                401: { "description": "Authentication required or user account is inactive.", },
+		                403: { "description": "Moderator or administrator role required.", },
+		                404: { "description": "Rating not found.", },
+		                }, )
 async def remove_rating( rating_id: int,
                          db: AsyncSession = Depends( get_db ),
                          user: User = Depends( get_current_active_user ), ):

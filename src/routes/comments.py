@@ -14,7 +14,16 @@ from src.services.permissions import can_delete_comment, can_edit_comment
 router = APIRouter()
 
 
-@router.post( "/photos/{photo_id}/comments", response_model=CommentResponse, status_code=status.HTTP_201_CREATED )
+@router.post( "/photos/{photo_id}/comments",
+              response_model=CommentResponse,
+              status_code=status.HTTP_201_CREATED,
+              summary="Add a comment to a photo",
+              description=("Create a comment under an existing photo. "
+                           "Only authenticated active users may add comments."),
+              responses={
+		              401: { "description": "Authentication required or user account is inactive.", },
+		              404: { "description": "Photo not found.", },
+		              }, )
 async def create_photo_comment( photo_id: int,
                                 data: CommentCreate,
                                 db: AsyncSession = Depends( get_db ),
@@ -26,14 +35,27 @@ async def create_photo_comment( photo_id: int,
 	return comment
 
 
-@router.get( "/photos/{photo_id}/comments", response_model=list[ CommentResponse ] )
+@router.get( "/photos/{photo_id}/comments",
+             response_model=list[ CommentResponse ],
+             summary="Get photo comments",
+             description="Return all comments associated with the specified photo.",
+             responses={ 404: { "description": "Photo not found.", },
+                         }, )
 async def get_comments( photo_id: int, db: AsyncSession = Depends( get_db ) ):
 	if await get_photo_by_id( db, photo_id ) is None:
 		raise HTTPException( status_code=404, detail="Photo not found" )
 	return await list_photo_comments( db, photo_id )
 
 
-@router.put( "/comments/{comment_id}", response_model=CommentResponse )
+@router.put( "/comments/{comment_id}",
+             response_model=CommentResponse,
+             summary="Edit a comment",
+             description="Update a comment. A user may edit only their own comments.",
+             responses={
+		             401: { "description": "Authentication required or user account is inactive.", },
+		             403: { "description": "The current user is not the author of this comment.", },
+		             404: { "description": "Comment not found.", },
+		             }, )
 async def edit_comment( comment_id: int,
                         data: CommentUpdate,
                         db: AsyncSession = Depends( get_db ),
@@ -48,7 +70,14 @@ async def edit_comment( comment_id: int,
 	return comment
 
 
-@router.delete( "/comments/{comment_id}" )
+@router.delete( "/comments/{comment_id}",
+                summary="Delete a comment",
+                description="Delete a comment. Only moderators and administrators may delete comments.",
+                responses={
+		                401: { "description": "Authentication required or user account is inactive.", },
+		                403: { "description": "Moderator or administrator role required.", },
+		                404: { "description": "Comment not found.", },
+		                }, )
 async def remove_comment( comment_id: int,
                           db: AsyncSession = Depends( get_db ),
                           user: User = Depends( get_current_active_user ), ):

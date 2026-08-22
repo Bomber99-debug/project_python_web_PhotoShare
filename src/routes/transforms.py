@@ -17,7 +17,17 @@ router = APIRouter()
 
 @router.post( "/photos/{photo_id}/transform",
               response_model=PhotoTransformResponse,
-              status_code=status.HTTP_201_CREATED, )
+              status_code=status.HTTP_201_CREATED,
+              summary="Transform a photo",
+              description=("Create a Cloudinary transformation for a photo, generate a QR code "
+                           "for the transformed image URL and persist both URLs in the database. "
+                           "The owner may transform their own photo; an admin may transform any photo."),
+              responses={
+		              400: { "description": "No valid transformation options were supplied.", },
+		              401: { "description": "Authentication required or user account is inactive.", },
+		              403: { "description": "The current user is not allowed to transform this photo.", },
+		              404: { "description": "Photo not found.", },
+		              }, )
 async def create_photo_transform( photo_id: int,
                                   data: TransformRequest,
                                   db: AsyncSession = Depends( get_db ),
@@ -42,14 +52,24 @@ async def create_photo_transform( photo_id: int,
 	return item
 
 
-@router.get( "/photos/{photo_id}/transforms", response_model=list[ PhotoTransformResponse ] )
+@router.get( "/photos/{photo_id}/transforms",
+             response_model=list[ PhotoTransformResponse ],
+             summary="Get photo transformations",
+             description="Return all saved transformed versions of the specified photo.",
+             responses={ 404: { "description": "Photo not found.", },
+                         }, )
 async def get_photo_transforms( photo_id: int, db: AsyncSession = Depends( get_db ) ):
 	if await get_photo_by_id( db, photo_id ) is None:
 		raise HTTPException( status_code=404, detail="Photo not found" )
 	return await list_transforms( db, photo_id )
 
 
-@router.get( "/transforms/{transform_id}", response_model=PhotoTransformResponse )
+@router.get( "/transforms/{transform_id}",
+             response_model=PhotoTransformResponse,
+             summary="Get a photo transformation",
+             description="Return one saved transformed photo URL and its QR-code URL.",
+             responses={ 404: { "description": "Transformation not found.", },
+                         }, )
 async def get_transform_by_id( transform_id: int, db: AsyncSession = Depends( get_db ) ):
 	item = await get_transform( db, transform_id )
 	if item is None:

@@ -20,12 +20,25 @@ from src.services.security import hash_password
 router = APIRouter()
 
 
-@router.get( "/me", response_model=UserResponse )
+@router.get( "/me",
+             response_model=UserResponse,
+             summary="Get current user profile",
+             description="Return the profile of the currently authenticated active user.",
+             responses={ 401: { "description": "Authentication required or user account is inactive.", },
+                         }, )
 async def get_me( user: User = Depends( get_current_active_user ) ) -> User:
 	return user
 
 
-@router.put( "/me", response_model=UserResponse )
+@router.put( "/me",
+             response_model=UserResponse,
+             summary="Update current user profile",
+             description=("Update the current user's username, email, password or avatar URL. "
+                          "Email addresses and usernames must remain unique."),
+             responses={ 400: { "description": "No fields supplied, email already registered or username already "
+                                               "taken.",
+                                }, 401: { "description": "Authentication required or user account is inactive.", },
+                         }, )
 async def update_me( data: UserUpdate,
                      db: AsyncSession = Depends( get_db ),
                      user: User = Depends( get_current_active_user ), ) -> User:
@@ -36,7 +49,8 @@ async def update_me( data: UserUpdate,
 		raise HTTPException( status_code=400, detail="Email already registered" )
 	if "username" in changes and changes[ "username" ] != user.username and await get_user_by_username( db,
 	                                                                                                    changes[
-		                                                                                                    "username" ], ):
+		                                                                                                    "username"
+	                                                                                                    ], ):
 		raise HTTPException( status_code=400, detail="Username already taken" )
 	if "password" in changes:
 		changes[ "password_hash" ] = hash_password( changes.pop( "password" ) )
@@ -45,7 +59,13 @@ async def update_me( data: UserUpdate,
 	return user
 
 
-@router.get( "/{username}", response_model=UserPublicProfile )
+@router.get( "/{username}",
+             response_model=UserPublicProfile,
+             summary="Get public user profile",
+             description="Return public profile information including username, avatar, role, registration date and "
+                         "number of uploaded photos.",
+             responses={ 404: { "description": "User not found.", },
+                         }, )
 async def public_profile( username: str, db: AsyncSession = Depends( get_db ) ) -> UserPublicProfile:
 	user = await get_user_by_username( db, username )
 	if user is None:
@@ -58,7 +78,16 @@ async def public_profile( username: str, db: AsyncSession = Depends( get_db ) ) 
 	                          uploaded_photos_count=await count_user_photos( db, user.id ), )
 
 
-@router.patch( "/{user_id}/ban", response_model=UserBanResponse )
+@router.patch( "/{user_id}/ban",
+               response_model=UserBanResponse,
+               summary="Ban a user",
+               description=("Deactivate a user account. A banned user cannot log in "
+                            "or use authenticated API operations. Administrator role required."),
+               responses={
+		               401: { "description": "Authentication required or user account is inactive.", },
+		               403: { "description": "Administrator role required.", },
+		               404: { "description": "User not found.", },
+		               }, )
 async def ban_user( user_id: int,
                     db: AsyncSession = Depends( get_db ),
                     _: User = Depends( require_admin ), ) -> UserBanResponse:
@@ -69,7 +98,15 @@ async def ban_user( user_id: int,
 	return UserBanResponse( id=user.id, username=user.username, is_active=False, message="User has been banned" )
 
 
-@router.patch( "/{user_id}/unban", response_model=UserBanResponse )
+@router.patch( "/{user_id}/unban",
+               response_model=UserBanResponse,
+               summary="Unban a user",
+               description="Reactivate a banned user account. Administrator role required.",
+               responses={
+		               401: { "description": "Authentication required or user account is inactive.", },
+		               403: { "description": "Administrator role required.", },
+		               404: { "description": "User not found.", },
+		               }, )
 async def unban_user( user_id: int,
                       db: AsyncSession = Depends( get_db ),
                       _: User = Depends( require_admin ), ) -> UserBanResponse:
@@ -80,7 +117,16 @@ async def unban_user( user_id: int,
 	return UserBanResponse( id=user.id, username=user.username, is_active=True, message="User has been unbanned" )
 
 
-@router.patch( "/{user_id}/role", response_model=UserResponse )
+@router.patch( "/{user_id}/role",
+		response_model=UserResponse,
+		summary="Change user role",
+		description=("Assign the user, moderator or admin role to an existing account. "
+		             "Administrator role required."),
+		responses={
+				401: { "description": "Authentication required or user account is inactive.", },
+				403: { "description": "Administrator role required.", },
+				404: { "description": "User not found.", },
+				}, )
 async def change_role( user_id: int,
                        data: UserRoleUpdate,
                        db: AsyncSession = Depends( get_db ),

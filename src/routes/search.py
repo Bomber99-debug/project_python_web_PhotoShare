@@ -16,17 +16,27 @@ from src.services.tags import normalize_tag_name
 router = APIRouter()
 
 
-@router.get( "/search", response_model=list[ PhotoResponse ] )
+@router.get( "/search",
+             response_model=list[ PhotoResponse ],
+             summary="Search and filter photos",
+             description=("Search photos by description keyword or tag and optionally filter by "
+                          "minimum rating and date range. Results may be sorted by creation date "
+                          "or rating in ascending or descending order. "
+                          "Filtering by `user_id` is restricted to moderators and administrators."),
+             responses={
+		             400: { "description": ("Invalid sort field, sort order, date range or tag."), },
+		             403: { "description": "The user_id filter requires moderator or administrator role.", },
+		             }, )
 async def search_photos( keyword: str | None = None,
-		tag: str | None = None,
-		min_rating: float | None = Query( default=None, ge=1, le=5 ),
-		sort_by: str = "date",
-		order: str = "desc",
-		user_id: int | None = None,
-		date_from: datetime | None = None,
-		date_to: datetime | None = None,
-		db: AsyncSession = Depends( get_db ),
-		current_user: User | None = Depends( get_optional_current_user ), ):
+                         tag: str | None = None,
+                         min_rating: float | None = Query( default=None, ge=1, le=5 ),
+                         sort_by: str = "date",
+                         order: str = "desc",
+                         user_id: int | None = None,
+                         date_from: datetime | None = None,
+                         date_to: datetime | None = None,
+                         db: AsyncSession = Depends( get_db ),
+                         current_user: User | None = Depends( get_optional_current_user ), ):
 	if sort_by not in { "date", "rating" }:
 		raise HTTPException( status_code=400, detail="sort_by must be 'date' or 'rating'" )
 	if order not in { "asc", "desc" }:

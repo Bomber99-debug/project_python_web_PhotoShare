@@ -34,8 +34,9 @@ def build_detail( photo: Photo ) -> PhotoDetailResponse:
 	summary = None
 	if photo.ratings:
 		summary = RatingAverageResponse( photo_id=photo.id,
-				average_rating=sum( item.value for item in photo.ratings ) / len( photo.ratings ),
-				ratings_count=len( photo.ratings ), )
+		                                 average_rating=sum(
+				                                 item.value for item in photo.ratings, ) / len( photo.ratings ),
+		                                 ratings_count=len( photo.ratings ), )
 	base = PhotoResponse.model_validate( photo )
 	return PhotoDetailResponse( **base.model_dump(),
 	                            comments=photo.comments,
@@ -43,12 +44,22 @@ def build_detail( photo: Photo ) -> PhotoDetailResponse:
 	                            transformed_photos=photo.transformed_photos, )
 
 
-@router.post( "", response_model=PhotoResponse, status_code=status.HTTP_201_CREATED )
+@router.post( "",
+              response_model=PhotoResponse,
+              status_code=status.HTTP_201_CREATED,
+              summary="Upload a photo",
+              description=("Upload an image to Cloudinary and save its metadata in PhotoShare. "
+                           "Supported formats: JPEG, PNG, GIF and WebP. "
+                           "A photo can contain at most five unique normalized tags."),
+              responses={
+		              400: { "description": "Unsupported image type or invalid tags.", },
+		              401: { "description": "Authentication required or user account is inactive.", },
+		              }, )
 async def upload_user_photo( file: UploadFile = File( ... ),
-		description: str | None = Form( default=None ),
-		tags: list[ str ] | None = Form( default=None ),
-		db: AsyncSession = Depends( get_db ),
-		user: User = Depends( get_current_active_user ), ) -> Photo:
+                             description: str | None = Form( default=None ),
+                             tags: list[ str ] | None = Form( default=None ),
+                             db: AsyncSession = Depends( get_db ),
+                             user: User = Depends( get_current_active_user ), ) -> Photo:
 	validate_image_file( file )
 	try:
 		normalized_tags = normalize_tag_names( tags )
@@ -78,7 +89,13 @@ async def upload_user_photo( file: UploadFile = File( ... ),
 		raise
 
 
-@router.get( "/{photo_id}", response_model=PhotoDetailResponse )
+@router.get( "/{photo_id}",
+             response_model=PhotoDetailResponse,
+             summary="Get photo details",
+             description=("Return a photo with its tags, comments, rating summary "
+                          "and saved transformed versions."),
+             responses={ 404: { "description": "Photo not found.", },
+                         }, )
 async def get_photo( photo_id: int, db: AsyncSession = Depends( get_db ) ) -> PhotoDetailResponse:
 	photo = await get_photo_detail( db, photo_id )
 	if photo is None:
@@ -86,7 +103,17 @@ async def get_photo( photo_id: int, db: AsyncSession = Depends( get_db ) ) -> Ph
 	return build_detail( photo )
 
 
-@router.put( "/{photo_id}", response_model=PhotoResponse )
+@router.put( "/{photo_id}",
+             response_model=PhotoResponse,
+             summary="Update a photo",
+             description=("Update the photo description and/or tags. "
+                          "The photo owner may edit their own photo; an admin may edit any photo."),
+             responses={
+		             400: { "description": "Invalid tags.", },
+		             401: { "description": "Authentication required or user account is inactive.", },
+		             403: { "description": "The current user is not allowed to modify this photo.", },
+		             404: { "description": "Photo not found.", },
+		             }, )
 async def update_user_photo( photo_id: int,
                              data: PhotoUpdate,
                              db: AsyncSession = Depends( get_db ),
@@ -111,7 +138,15 @@ async def update_user_photo( photo_id: int,
 	return photo
 
 
-@router.delete( "/{photo_id}" )
+@router.delete( "/{photo_id}",
+                summary="Delete a photo",
+                description=("Delete a photo from Cloudinary and PhotoShare. "
+                             "The owner may delete their own photo; an admin may delete any photo."),
+                responses={
+		                401: { "description": "Authentication required or user account is inactive.", },
+		                403: { "description": "The current user is not allowed to delete this photo.", },
+		                404: { "description": "Photo not found.", },
+		                }, )
 async def delete_user_photo( photo_id: int,
                              db: AsyncSession = Depends( get_db ),
                              user: User = Depends( get_current_active_user ), ) -> dict[ str, str ]:
