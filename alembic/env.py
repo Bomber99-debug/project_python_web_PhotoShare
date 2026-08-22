@@ -8,7 +8,7 @@ from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from src.conf.config import settings
-from src.entity.base import Base  # imports all entities
+from src.entity import Base
 
 config = context.config
 config.set_main_option("sqlalchemy.url", settings.database_url)
