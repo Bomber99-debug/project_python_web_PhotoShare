@@ -1047,10 +1047,10 @@ CLOUDINARY_API_SECRET=...
 Після deployment у цьому розділі необхідно додати:
 
 ```text
-API: https://<deployment-url>
-Swagger: https://<deployment-url>/docs
-ReDoc: https://<deployment-url>/redoc
-Health: https://<deployment-url>/health
+API: https://project-python-web-photoshare.onrender.com
+Swagger: https://project-python-web-photoshare.onrender.com/docs
+ReDoc: https://project-python-web-photoshare.onrender.com/redoc
+Health: https://project-python-web-photoshare.onrender.com/health
 ```
 
 ---
