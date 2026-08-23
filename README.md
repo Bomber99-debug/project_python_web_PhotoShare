@@ -1032,19 +1032,17 @@ CLOUDINARY_API_SECRET=...
 
 ## Розгортання
 
-Проєкт підготовлений до контейнерного розгортання через `Dockerfile`.
+Проєкт розгорнуто на Render.
 
-Контейнер:
+Для production використовується:
 
-1. встановлює production-залежності через Poetry;
-2. використовує зафіксовані версії з `poetry.lock`;
-3. запускає `alembic upgrade head`;
-4. після успішних міграцій запускає Uvicorn;
-5. слухає порт `8000`.
+- Render Web Service для FastAPI;
+- Render PostgreSQL;
+- Cloudinary для зберігання фотографій і QR-кодів;
+- Docker для запуску застосунку;
+- Alembic для автоматичного застосування міграцій перед запуском Uvicorn.
 
-Публічна адреса застосунку буде додана після розгортання.
-
-Після deployment у цьому розділі необхідно додати:
+Публічні адреси:
 
 ```text
 API: https://project-python-web-photoshare.onrender.com
